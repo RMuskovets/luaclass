@@ -44,5 +44,9 @@ return function (class)
 		return obj
 	end
 
+	function nclass:extend()
+
+	end
+
 	return nclass
 end
