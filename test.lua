@@ -4,8 +4,6 @@ local Str
 
 Str = class {
 
-	static = {},
-
 	constructor = function (self, s) self.__str = s end,
 
 	plus = function (lhs, rhs) return Str:new(tostring(lhs) .. tostring(rhs)) end,
