@@ -38,7 +38,11 @@ return function (class, parent)
   end
 
   for key, value in pairs(class) do
-    nclass[OPS_TABLE[key] or key] = value
+    -- nclass[OPS_TABLE[key] or key] = value
+    if OPS_TABLE[key] then
+      nclass[OPS_TABLE[key]] = value
+    end
+    nclass[key] = value
   end
 
   function nclass:new(...)
