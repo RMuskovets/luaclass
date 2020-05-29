@@ -1,7 +1,7 @@
 package = "luaclass"
 version = "scm-1"
 source = {
-   url = "*** please add URL for source tarball, zip or repository here ***"
+   url = "https://github.com/RMuskovets/luaclass/archive/master.zip"
 }
 description = {
    homepage = "https://github.com/RMuskovets/luaclass",
