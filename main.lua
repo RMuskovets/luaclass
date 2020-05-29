@@ -21,7 +21,10 @@ local OPS_TABLE = {
   concat = "__concat",
 
   call = "__call",
-  tostring = "__tostring"
+  tostring = "__tostring",
+
+  pairs = "__pairs",
+  ipairs = "__ipairs"
 }
 
 return function (class, parent)
