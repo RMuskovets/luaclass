@@ -24,28 +24,28 @@ local OPS_TABLE = {
 	tostring = "__tostring"
 }
 
-return function (class)
+return function (class, parent)
 
 	local new = class.constructor or function (self) end
 	
-	local nclass = {}
+	local nclass = { super = parent }
 	nclass.__index = nclass
 
-	for key, value in pairs(class) do
-		if key ~= 'constructor' then
-			nclass[OPS_TABLE[key] or key] = value
+	for k, v in pairs(parent or {}) do
+		if k ~= "new" and k ~= "super" then
+			nclass[k] = v
 		end
 	end
 
-	function nclass:new(...)
-		local obj = {}
-		new(obj, ...)
-		setmetatable(obj, self)
-		return obj
+	for key, value in pairs(class) do
+		nclass[OPS_TABLE[key] or key] = value
 	end
 
-	function nclass:extend()
-
+	function nclass:new(...)
+		local obj = { __class = nclass, super = parent }
+		new(obj, ...)
+		setmetatable(obj, nclass)
+		return obj
 	end
 
 	return nclass
