@@ -55,5 +55,15 @@ return function (class, parent)
     return obj
   end
 
+  function nclass:is(smth)
+    if type(smth) ~= 'table' then
+      return false
+    elseif smth.__class ~= self then
+      return false
+    else
+      return true
+    end
+  end
+
   return nclass
 end
