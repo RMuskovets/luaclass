@@ -25,7 +25,7 @@ local List
 
 List = class {
   constructor = function (self, items)
-    -- self.__items = (type(items) == table and items.__class == nil) and items or { items }
+    items = (items == nil) and {} or items
     if List:is(items) then
       self.__items = items:items()
     elseif type(items) == 'table' then
@@ -74,7 +74,27 @@ List = class {
   ipairs = function (self) return ipairs(self:items()) end,
 
   items = function (self) return self.__items end,
-  at = function (self, i) return self.__items[i] end
+  at = function (self, i) return self.__items[i] end,
+
+  add = function (self, elem)
+    table.insert(self.__items, elem)
+  end,
+
+  map = function (self, f)
+    local newList = List:new()
+    for i, e in pairs(self) do
+      newList:add(f(e))
+    end
+    return newList
+  end,
+
+  filter = function (self, f)
+    local newList = List:new()
+    for i, e in pairs(self) do
+      if f(e) then newList:add(e) end
+    end
+    return newList
+  end
 }
 
 local l = List:new({ 'hello', 'world' })
