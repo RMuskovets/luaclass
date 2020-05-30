@@ -139,4 +139,8 @@ print(l2:filter(function (x) return x % 2 == 0 end))
 l2:remove_if(function (x) return x % 2 == 0 end)
 print(l2)
 
+print(l2[1])
+print(l2[2])
+print(l2.__items)
+
 return List
