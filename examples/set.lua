@@ -16,7 +16,7 @@ local Set = {
 
 Set = class(Set, List)
 
-local s = Set:new({ 'hello', 'world' })
+local s = Set:new{ 'hello', 'world' }
 print(s)
-print(s + Set:new({ 'hello' }))
-print(s + Set:new({ 'World' }))
+print(s + Set:new{ 'hello' })
+print(s + Set:new{ 'World' })

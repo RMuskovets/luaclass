@@ -15,13 +15,13 @@ Str = class {
   tostring = function (self)  return self.__str end
 }
 
-local s = Str:new("hello, world")
+local s = Str:new"hello, world"
 print(s)
 print(tostring(s))
-print(s + Str:new("hi"))
+print(s + Str:new"hi")
 print(s * 3)
 
-local s2 = Str:new("hi") + "!\n" .. "hmm..."
+local s2 = Str:new"hi" + "!\n" .. "hmm..."
 print(s2)
 
 print(#s)
@@ -31,9 +31,9 @@ local Str2 = class({
   constructor = function (self, s) self.super.constructor(self, s) end
 }, Str)
 
-print(Str:new('world'))
-print(Str2:new('world'))
+print(Str:new'world')
+print(Str2:new'world')
 
-print(Str2:new("hello, ")
-    + Str2:new("world") 
+print(Str2:new"hello, "
+    + Str2:new"world"
     + "!!!")

@@ -113,19 +113,19 @@ List = class {
   end
 }
 
-local l = List:new({ 'hello', 'world' })
+local l = List:new{ 'hello', 'world' }
 
 print(tostring(l))
-print(tostring(l + List:new({ '!' })))
+print(tostring(l + List:new{ '!' }))
 print(l:tostring())
 
 for key, elem in pairs(l) do
   print(key, elem)
 end
 
-local l2 = List:new({ 1, 2, 3 })
+local l2 = List:new{ 1, 2, 3 }
 print(l2)
-print(l2 + List:new({ 4, 5, 6 }))
+print(l2 + List:new{ 4, 5, 6 })
 
 for i = 4, 10 do
   l2:add(i)
