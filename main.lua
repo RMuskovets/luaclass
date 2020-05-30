@@ -27,6 +27,10 @@ local OPS_TABLE = {
   ipairs = "__ipairs"
 }
 
+if not debug then
+  local debug = require 'debug'
+end
+
 function deepcopy(orig, copies)
   copies = copies or {}
   local orig_type = type(orig)
@@ -78,8 +82,22 @@ return function (class, parent)
   end
 
   function nclass:new(...)
+    local meta = deepcopy(nclass)
+    if nclass.at ~= nil then
+      local old_index = meta.__index
+      local is_objfn = debug.getinfo(nclass.at).nparams >= 2 -- self, idx, ...
+      if is_objfn then
+        function meta:__index(k)
+          return nclass.at(self, k) or nclass[k]
+        end
+      else
+        function meta.__index(k)
+          return nclas.at(k) or nclass[k]
+        end
+      end
+    end
     local obj = { __class = nclass, super = parent }
-    setmetatable(obj, nclass)
+    setmetatable(obj, meta)
     new(obj, ...)
     return obj
   end
