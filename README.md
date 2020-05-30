@@ -15,8 +15,7 @@ The second example is more complicated - it has a `List` class with many feature
 # Usage
 Okay, examples are good, but not everyone likes to only read code...
 So here's some "documentation" for the library, and...
-**DON'T EVER USE `__index` IN YOUR CLASSES! IT WILL INTERFERE WITH THE IMPLEMENTATION AND CAUSE BUGS!**
-**ALSO, MAGIC METHODS HAVE SYNONYMS! USE THE SYNONYMS!**
+**MAGIC METHODS HAVE SYNONYMS! USE THE SYNONYMS!**
 
 ## class(class, parent?) -> table
 This function creates a "class" using the data in `class` argument and (optionally) extends it from another class.
