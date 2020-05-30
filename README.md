@@ -1,6 +1,6 @@
 # luaclass
 After thinking about OOP and Lua and trying to mod Factorio, I decided to make a library for easier OOP programming.
-It shares the most principles with [this repository, which is also named luaclass](), but I kind of think that my one is better.
+It shares the most principles with [this repository, which is also named luaclass](https://github.com/benglard/luaclass), but I kind of think that my one is better :)
 
 # Examples
 You may notice that this repository has a `examples/` folder with two files: `str.lua` and `list.lua`.
