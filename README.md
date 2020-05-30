@@ -69,3 +69,80 @@ Just calls the constructor.
 
 ## object.\_\_class
 This field is the class of this object.
+
+# "Magic" methods
+
+## Arithmetic
+
+### `plus`
+A method to get the sum of the two objects.
+
+### `minus`
+A method to subtract B from A.
+
+### `times`
+A method to multiply A by B.
+
+### `divide`
+A method to divide A by B.
+
+### `power`
+A method to get the "B"-th power of "A".
+
+### `modulo`
+A method to modulo this object by another one.
+
+### `idivide`
+
+## Comparison
+
+### `equals`
+A method to check the equality between two objects (`a == b`). `a ~= b` is generated from this one.
+
+### `lessthan`
+A method to check that `a < b`. `a > b` is generated from this one.
+
+### `lesseqthan`
+A method to check that `a <= b`. `a >= b` is generated from this one.
+
+## Bitwise "magic"
+
+### `binand`
+A method to do a binary AND operation between two objects (`binand(a, b)`).
+
+### `binor`
+A method to do a binary OR operation between two objects (`binor(a, b)`).
+
+### `binxor`
+A method to do a XOR operation between two objects (`binxor(a, b)`).
+
+### `binnot`
+A method to negate (`~`) this object.
+
+### `shiftl`
+A method to bitwise shift this object left by N bits.
+
+### `shiftr`
+A method to bitwise shift this object right by N bits.
+
+## Iteration
+
+### `pairs`
+A method that returns a alternative implementation of the `pairs` iterator for this object.
+
+### `ipairs`
+A method that returns a alternative implementation of the `ipairs` iterator for this object.
+
+## Other
+
+### `tostring`
+A method to convert this object to string. `tostring(x)` = `x:tostring()`.
+
+### `concat`
+A method for concatenating objects. `a .. b` = `concat(a, b)`.
+
+### `length`
+If some code gets the length of this object by using `#object`, this method is invoked.
+
+### `call`
+If this object is invoked as a function, the `call` method is invoked with the arguments given.
