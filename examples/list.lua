@@ -1,4 +1,4 @@
-local class = require './main'
+local class = require '../main'
 
 function deepcopy(orig, copies)
   copies = copies or {}
@@ -36,17 +36,17 @@ List = class {
   end,
 
   plus = function (lhs, rhs)
-    if List:is(items) then -- this is a List of elements
+    if lhs.__class:is(rhs) or List:is(rhs) then -- this is a List of elements
       return lhs + rhs:items()
     elseif type(rhs) == 'table' then -- this is a table ("array") of elements
-      local newList = List:new(deepcopy(lhs:items()))
+      local newList = lhs.__class:new(deepcopy(lhs:items()))
       for _, v in pairs(rhs) do
-        table.insert(newList.__items, v)
+        newList:add(v)
       end
       return newList
     else -- this is a single element
-      local newList = List:new(deepcopy(lhs:items()))
-      table.insert(newList.__items, rhs)
+      local newList = lhs.__class:new(deepcopy(lhs:items()))
+      newList:add(rhs)
       return newList
     end end,
   concat = function (lhs, rhs) return lhs + rhs end,
@@ -94,6 +94,22 @@ List = class {
       if f(e) then newList:add(e) end
     end
     return newList
+  end,
+
+  count_of = function (self, e)
+    local count = 0
+    for i, E in pairs(self) do
+      if e == E then count = count + 1 end
+    end
+    return count
+  end,
+
+  remove_if = function (self, f)
+    self.__items = self:filter(function (x) return not f(x) end).__items
+  end,
+
+  remove = function (self, i)
+    table.remove(self.__items, i)
   end
 }
 
@@ -106,3 +122,21 @@ print(l:tostring())
 for key, elem in pairs(l) do
   print(key, elem)
 end
+
+local l2 = List:new({ 1, 2, 3 })
+print(l2)
+print(l2 + List:new({ 4, 5, 6 }))
+
+for i = 4, 10 do
+  l2:add(i)
+end
+
+print(l2)
+
+print(l2:map(function (x) return x * 2 end))
+print(l2:filter(function (x) return x % 2 == 0 end))
+
+l2:remove_if(function (x) return x % 2 == 0 end)
+print(l2)
+
+return List
