@@ -27,21 +27,50 @@ local OPS_TABLE = {
   ipairs = "__ipairs"
 }
 
+function deepcopy(orig, copies)
+  copies = copies or {}
+  local orig_type = type(orig)
+  local copy
+  if orig_type == 'table' then
+    if copies[orig] then
+      copy = copies[orig]
+    else
+      copy = {}
+      copies[orig] = copy
+      for orig_key, orig_value in next, orig, nil do
+        copy[deepcopy(orig_key, copies)] = deepcopy(orig_value, copies)
+      end
+      setmetatable(copy, deepcopy(getmetatable(orig), copies))
+    end
+  else -- number, string, boolean, etc
+    copy = orig
+  end
+  return copy
+end
+
 return function (class, parent)
 
   local new = class.constructor or function (self) end
+  local parent = deepcopy(parent or {})
   
-  local nclass = { super = parent }
+  local nclass = {}
   nclass.__index = nclass
 
   for k, v in pairs(parent or {}) do
-    if k ~= "new" and k ~= "super" then
-      nclass[k] = v
+    if k ~= "new" and k ~= "super" and k ~= "__class" then
+      -- nclass[k] = (class[k] == nil) and v or class[k]
+      if class[k] ~= nil then
+        nclass[k] = class[k]
+        if k ~= "constructor" then
+          parent[k] = class[k]
+        end
+      else
+        nclass[k] = v
+      end
     end
   end
 
   for key, value in pairs(class) do
-    -- nclass[OPS_TABLE[key] or key] = value
     if OPS_TABLE[key] then
       nclass[OPS_TABLE[key]] = value
     end
@@ -50,8 +79,8 @@ return function (class, parent)
 
   function nclass:new(...)
     local obj = { __class = nclass, super = parent }
-    new(obj, ...)
     setmetatable(obj, nclass)
+    new(obj, ...)
     return obj
   end
 
