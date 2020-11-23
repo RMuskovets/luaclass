@@ -92,7 +92,7 @@ return function (class, parent)
         end
       else
         function meta.__index(k)
-          return nclas.at(k) or nclass[k]
+          return nclass.at(k) or nclass[k]
         end
       end
     end
