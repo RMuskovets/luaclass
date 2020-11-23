@@ -17,7 +17,7 @@ Okay, examples are good, but not everyone likes to only read code...
 So here's some "documentation" for the library, and...
 **MAGIC METHODS HAVE SYNONYMS! USE THE SYNONYMS!**
 
-## class(class, parent?) -> table
+## `class(class, parent?) -> table`
 This function creates a "class" using the data in `class` argument and (optionally) extends it from another class.
 Example:
 ```lua
@@ -41,7 +41,7 @@ baz = class({
 }, foo)
 baz:new() -- prints both "foo::constructor()" and "baz::constructor()"
 ```
-## class:new(...) -> table
+## `class:new(...) -> table`
 This function creates an instance of the class.
 Example:
 ```lua
@@ -53,7 +53,7 @@ foo = class {
 
 local fooobj = foo:new()
 ```
-## class:is(smth) -> boolean
+## `class:is(smth) -> boolean`
 This function checks is this value an instance of this class. Doesn't check for subclasses!
 Example:
 ```lua
@@ -64,10 +64,10 @@ print(bar:is(foo:new())) -- prints "false" because a `foo` object isn't a `bar` 
 print(foo:is(bar:new())) -- prints "false" because as I said, it doesn't check for subclasses
 print(baz:is(baz:new())) -- prints "true" because a `baz` object is a `baz` object
 ```
-## object:constructor(...)
+## `object:constructor(...)`
 Just calls the constructor.
 
-## object.\_\_class
+## `object.__class`
 This field is the class of this object.
 
 # "Magic" methods
@@ -75,74 +75,75 @@ This field is the class of this object.
 ## Arithmetic
 
 ### `plus`
-A method to get the sum of the two objects.
+A method to get the sum of the two objects. Same as `__add`.
 
 ### `minus`
-A method to subtract B from A.
+A method to subtract B from A. Same as `__sub`.
 
 ### `times`
-A method to multiply A by B.
+A method to multiply A by B. Same as `__mul`.
 
 ### `divide`
-A method to divide A by B.
+A method to divide A by B. Same as `__div`.
 
 ### `power`
-A method to get the "B"-th power of "A".
+A method to get the "B"-th power of "A". Same as `__pow`.
 
 ### `modulo`
-A method to modulo this object by another one.
+A method to modulo this object by another one (get the remainder of division). Same as `__mod`.
 
 ### `idivide`
+Floor division (`a // b`). Same as `__idiv`.
 
 ## Comparison
 
 ### `equals`
-A method to check the equality between two objects (`a == b`). `a ~= b` is generated from this one.
+A method to check the equality between two objects (`a == b`). `a ~= b` is generated from this one. Same as `__eq`.
 
 ### `lessthan`
-A method to check that `a < b`. `a > b` is generated from this one.
+A method to check that `a < b`. `a > b` is generated from this one. Same as `__lt`.
 
 ### `lesseqthan`
-A method to check that `a <= b`. `a >= b` is generated from this one.
+A method to check that `a <= b`. `a >= b` is generated from this one. Same as `__le`.
 
 ## Bitwise "magic"
 
 ### `binand`
-A method to do a binary AND operation between two objects (`binand(a, b)`).
+A method to do a binary AND operation between two objects (`binand(a, b)`, `a & b`). Same as `__band`.
 
 ### `binor`
-A method to do a binary OR operation between two objects (`binor(a, b)`).
+A method to do a binary OR operation between two objects (`binor(a, b)`, `a | b`). Same as `__bor`.
 
 ### `binxor`
-A method to do a XOR operation between two objects (`binxor(a, b)`).
+A method to do a XOR operation between two objects (`binxor(a, b)`, `a ~ b`). Same as `__bxor`.
 
 ### `binnot`
-A method to negate (`~`) this object.
+A method to negate (`~`) this object. Same as `__bnot`.
 
 ### `shiftl`
-A method to bitwise shift this object left by N bits.
+A method to bitwise shift this object left by N bits (`a << N`). Same as `__shl`.
 
 ### `shiftr`
-A method to bitwise shift this object right by N bits.
+A method to bitwise shift this object right by N bits (`a >> N`). Same as `__shr`.
 
 ## Iteration
 
 ### `pairs`
-A method that returns a alternative implementation of the `pairs` iterator for this object.
+A method that returns a alternative implementation of the `pairs` iterator for this object. Same as `__pairs`.
 
 ### `ipairs`
-A method that returns a alternative implementation of the `ipairs` iterator for this object.
+A method that returns a alternative implementation of the `ipairs` iterator for this object. Same as `__ipairs`.
 
 ## Other
 
 ### `tostring`
-A method to convert this object to string. `tostring(x)` = `x:tostring()`.
+A method to convert this object to string. `tostring(x)` = `x:tostring()`. Same as `__tostring`.
 
 ### `concat`
-A method for concatenating objects. `a .. b` = `concat(a, b)`.
+A method for concatenating objects. `a .. b` = `concat(a, b)`. Same as `__concat`.
 
 ### `length`
-If some code gets the length of this object by using `#object`, this method is invoked.
+If some code gets the length of this object by using `#object`, this method is invoked. Same as `__len`.
 
 ### `call`
-If this object is invoked as a function, the `call` method is invoked with the arguments given.
+If this object is invoked as a function, the `call` method is invoked with the arguments given. Same as `__call`.
