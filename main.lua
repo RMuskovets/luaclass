@@ -1,116 +1,94 @@
-local OPS_TABLE = {
-  plus = "__add",
-  minus = "__sub",
-  times = "__mul",
-  divide = "__div",
-  power = "__pow",
-  modulo = "__mod",
-  idivide = "__idiv",
-  equals = "__eq",
-  lessthan = "__lt",
-  lesseqthan = "__le",
-
-  binand = "__band",
-  binor = "__bor",
-  binxor = "__bxor",
-  binnot = "__bnot",
-  shiftl = "__bshl",
-  shiftr = "__bshr",
-
-  length = "__len",
-  concat = "__concat",
-
-  call = "__call",
-  tostring = "__tostring",
-
-  pairs = "__pairs",
-  ipairs = "__ipairs"
+local magic = {
+    init = '__init'
 }
 
-if not debug then
-  local debug = require 'debug'
+local function deepcopy(orig, copies)
+    copies = copies or {}
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        if copies[orig] then
+            copy = copies[orig]
+        else
+            copy = {}
+            copies[orig] = copy
+            for orig_key, orig_value in next, orig, nil do
+                copy[deepcopy(orig_key, copies)] = deepcopy(orig_value, copies)
+            end
+            setmetatable(copy, deepcopy(getmetatable(orig), copies))
+        end
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
 end
 
-function deepcopy(orig, copies)
-  copies = copies or {}
-  local orig_type = type(orig)
-  local copy
-  if orig_type == 'table' then
-    if copies[orig] then
-      copy = copies[orig]
-    else
-      copy = {}
-      copies[orig] = copy
-      for orig_key, orig_value in next, orig, nil do
-        copy[deepcopy(orig_key, copies)] = deepcopy(orig_value, copies)
-      end
-      setmetatable(copy, deepcopy(getmetatable(orig), copies))
-    end
-  else -- number, string, boolean, etc
-    copy = orig
-  end
-  return copy
+---@class Class
+---@field private __mt table
+---@field private __template table
+---@field public new fun(...):Object
+
+---@class Object
+---@field private __class Class
+---@field private super table
+---@field private __init fun(self:Object,...)
+
+local _M = {}
+
+function _M.static(smth)
+    return { __static = true, obj = smth }
 end
 
-return function (class, parent)
+---@param cls Class
+---@param parent Class|nil
+---@return Class
+function _M.class(cls, parent)
+    local class = { __mt = { __index = function (self, idx)
+        return rawget(self, magic[idx]) or rawget(self.super, magic[idx])
+    end }, __template = {} } ---@type Class
+    local class_mt = {}
 
-  local new = class.constructor or function (self) end
-  local parent = deepcopy(parent or {})
-  
-  local nclass = {}
-  nclass.__index = nclass
+    if parent ~= nil then
+        class.__mt = parent.__mt
+        class_mt.super = parent
 
-  for k, v in pairs(parent or {}) do
-    if k ~= "new" and k ~= "super" and k ~= "__class" then
-      -- nclass[k] = (class[k] == nil) and v or class[k]
-      if class[k] ~= nil then
-        nclass[k] = class[k]
-        if k ~= "constructor" then
-          parent[k] = class[k]
+        class.__template.super = parent.__template -- superclass methods/fields
+        setmetatable(class.__template.super, parent.__mt)
+    end
+
+    class.__mt.__class = class
+
+    for k, v in pairs(cls) do
+        if type(v) == "table" and v.__static then -- static field or function
+            if type(v.obj) == "function" then -- invoke with `res` as first param
+                class[k] = function (...) return v.obj(class, ...) end
+            else
+                class[k] = v
+            end
+        else
+            if magic[k] ~= nil then
+                class.__mt[magic[k]] = v
+            end
+            class.__template[magic[k] or k] = v
         end
-      else
-        nclass[k] = v
-      end
     end
-  end
 
-  for key, value in pairs(class) do
-    if OPS_TABLE[key] then
-      nclass[OPS_TABLE[key]] = value
+    function class:new(...)
+        local obj = setmetatable(deepcopy(class.__template), class.__mt) ---@type Object
+
+        obj.__init(obj, ...)
+
+        return obj
     end
-    nclass[key] = value
-  end
+    class_mt.__call = function (...) return class:new(...) end
 
-  function nclass:new(...)
-    local meta = deepcopy(nclass)
-    if nclass.at ~= nil then
-      local old_index = meta.__index
-      local is_objfn = debug.getinfo(nclass.at).nparams >= 2 -- self, idx, ...
-      if is_objfn then
-        function meta:__index(k)
-          return nclass.at(self, k) or nclass[k]
-        end
-      else
-        function meta.__index(k)
-          return nclass.at(k) or nclass[k]
-        end
-      end
-    end
-    local obj = { __class = nclass, super = parent }
-    setmetatable(obj, meta)
-    new(obj, ...)
-    return obj
-  end
-
-  function nclass:is(smth)
-    if type(smth) ~= 'table' then
-      return false
-    elseif smth.__class ~= self then
-      return false
-    else
-      return true
-    end
-  end
-
-  return nclass
+    return setmetatable(class, class_mt)
 end
+
+function _M.extend(parent) return function (cls) -- call like this: extend(parent) { ... }
+    return _M.class(cls, parent)
+end end
+
+return setmetatable(_M, {
+    __call = function (_, cls) return _M.class(cls) end
+})
