@@ -39,12 +39,21 @@ function _M.static(smth)
     return { __static = true, obj = smth }
 end
 
----@param cls Class
+---@param cls table
 ---@param parent Class|nil
 ---@return Class
 function _M.class(cls, parent)
     local class = { __mt = { __index = function (self, idx)
-        return rawget(self, magic[idx]) or rawget(self.super, magic[idx])
+        -- return rawget(self, magic[idx])
+        --     or (self.super and rawget(self.super, magic[idx]))
+        --     or rawget(self, idx)
+        if magic[idx] ~= nil then
+            return rawget(getmetatable(self), magic[idx])
+                or rawget(self.super, magic[idx])
+        else
+            return rawget(self, idx)
+                or (self.super and rawget(self.super, idx) or nil)
+        end
     end }, __template = {} } ---@type Class
     local class_mt = {}
 
@@ -76,7 +85,9 @@ function _M.class(cls, parent)
     function class:new(...)
         local obj = setmetatable(deepcopy(class.__template), class.__mt) ---@type Object
 
-        obj.__init(obj, ...)
+        if cls.init ~= nil then
+            cls.init(obj, ...)
+        end
 
         return obj
     end
